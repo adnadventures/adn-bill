@@ -313,36 +313,6 @@ Important Notes
         y += 8;
       };
 
-      const summaryRow = (
-        label: string,
-        value: string,
-        highlight = false,
-        isBlue = false
-      ) => {
-        checkNewPage(10);
-        if (highlight) {
-          pdf.setFillColor(230, 242, 255);
-          pdf.rect(margin, y - 4, contentW, 8, 'F');
-        } else {
-          pdf.setFillColor(248, 248, 248);
-          pdf.rect(margin, y - 4, contentW * 0.65, 8, 'F');
-        }
-        pdf.setDrawColor(200);
-        pdf.setLineWidth(0.2);
-        pdf.rect(margin, y - 4, contentW, 8);
-        pdf.line(margin + contentW * 0.65, y - 4, margin + contentW * 0.65, y + 4);
-        pdf.setFont('helvetica', highlight ? 'bold' : 'bold');
-        pdf.setFontSize(9);
-        pdf.setTextColor(highlight ? 0 : 80);
-        pdf.text(label, margin + 2, y + 0.5);
-        if (isBlue) pdf.setTextColor(0, 80, 180);
-        else pdf.setTextColor(0);
-        pdf.setFont('helvetica', highlight ? 'bold' : 'normal');
-        pdf.text(value, pageW - margin - 2, y + 0.5, { align: 'right' });
-        pdf.setTextColor(0);
-        y += 8;
-      };
-
       // ── HEADER ───────────────────────────────────────────────────
       // Try to load logo
       try {
@@ -449,27 +419,10 @@ Important Notes
           `Rs. ${parseFloat(String(payment.amount)).toLocaleString()} (${formatDate(payment.date)})`
         );
       });
-      tableRow('Discount', `Rs. ${formData.discount.toLocaleString()}`);
+      if (formData.discount > 0) {
+        tableRow('Discount', `Rs. ${formData.discount.toLocaleString()}`);
+      }
       tableRow('Remaining Balance', `Rs. ${calculateBalance().toLocaleString()}`, true, false, true);
-
-      y += 4;
-      sectionLine();
-
-      // ── PAYMENT SUMMARY ──────────────────────────────────────────
-      checkNewPage(12);
-      boldText('Payment Summary', margin, y, 11);
-      y += 7;
-
-      summaryRow('Total Package Amount', `Rs. ${formData.totalPackagePrice.toLocaleString()}`);
-      summaryRow('Discount Applied', `- Rs. ${formData.discount.toLocaleString()}`);
-      summaryRow('Advance Payment Received', `Rs. ${formData.advancePaid.toLocaleString()}`);
-      formData.payments.forEach((payment, index) => {
-        summaryRow(
-          `Payment ${index + 1} Received`,
-          `Rs. ${parseFloat(String(payment.amount)).toLocaleString()}`
-        );
-      });
-      summaryRow('Total Amount Received', `Rs. ${calculateTotalReceived().toLocaleString()}`, true, true);
 
       y += 4;
       sectionLine();
@@ -828,7 +781,7 @@ Important Notes
                     type="number"
                     value={formData.discount}
                     onChange={(e) =>
-                      handleInputChange('discount', parseFloat(e.target.value))
+                      handleInputChange('discount', parseFloat(e.target.value) || 0)
                     }
                   />
                 </div>
@@ -1192,14 +1145,16 @@ Important Notes
                           </td>
                         </tr>
                       ))}
-                      <tr className="border border-slate-300">
-                        <td className="border border-slate-300 px-3 py-2 font-semibold text-slate-700 bg-slate-50">
-                          Discount
-                        </td>
-                        <td className="border border-slate-300 px-3 py-2 text-slate-900">
-                          ₹{formData.discount.toLocaleString()}
-                        </td>
-                      </tr>
+                      {formData.discount > 0 && (
+                        <tr className="border border-slate-300">
+                          <td className="border border-slate-300 px-3 py-2 font-semibold text-slate-700 bg-slate-50">
+                            Discount
+                          </td>
+                          <td className="border border-slate-300 px-3 py-2 text-slate-900">
+                            ₹{formData.discount.toLocaleString()}
+                          </td>
+                        </tr>
+                      )}
                       <tr className="border border-slate-300">
                         <td className="border border-slate-300 px-3 py-2 font-semibold text-slate-700 bg-slate-50">
                           Remaining Balance
