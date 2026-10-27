@@ -67,6 +67,7 @@ interface InvoiceData {
   packageDestination: string;
   packageStartDate: string;
   packageEndDate: string;
+  duration: string;
   numberOfMembers: number;
   totalPackagePrice: number;
   advancePaid: number;
@@ -94,6 +95,7 @@ export default function InvoiceGenerator() {
     packageDestination: '',
     packageStartDate: '',
     packageEndDate: '',
+    duration: '',
     numberOfMembers: 0,
     totalPackagePrice: 0,
     advancePaid: 0,
@@ -409,6 +411,7 @@ Important Notes
 
       tableRow('Package Destination', formData.packageDestination || '-');
       tableRow('Package Date', `${formatDate(formData.packageStartDate)} to ${formatDate(formData.packageEndDate)}`);
+      tableRow('Duration', formData.duration || '-');
       tableRow('Number of Members', `${formData.numberOfMembers} Members`);
       tableRow('Total Package Price', `Rs. ${formData.totalPackagePrice.toLocaleString()}`);
       tableRow('Advance Paid', `Rs. ${formData.advancePaid.toLocaleString()}`);
@@ -749,6 +752,17 @@ Important Notes
                       }
                     />
                   </div>
+                </div>
+                <div>
+                  <Label htmlFor="duration">Duration</Label>
+                  <Input
+                    id="duration"
+                    placeholder="e.g. 3 Days / 2 Nights"
+                    value={formData.duration}
+                    onChange={(e) =>
+                      handleInputChange('duration', e.target.value)
+                    }
+                  />
                 </div>
                 <div>
                   <Label htmlFor="numberOfMembers">Number of Members</Label>
@@ -1100,6 +1114,14 @@ Important Notes
                         <td className="border border-slate-300 px-3 py-2 text-slate-900">
                           {formatDate(formData.packageStartDate)} to{' '}
                           {formatDate(formData.packageEndDate)}
+                        </td>
+                      </tr>
+                      <tr className="border border-slate-300">
+                        <td className="border border-slate-300 px-3 py-2 font-semibold text-slate-700 bg-slate-50">
+                          Duration
+                        </td>
+                        <td className="border border-slate-300 px-3 py-2 text-slate-900">
+                          {formData.duration}
                         </td>
                       </tr>
                       <tr className="border border-slate-300">
